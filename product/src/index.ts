@@ -1,12 +1,7 @@
-import "dotenv/config";
-import express from "express";
-import KafkaConsumer from "./shared/consumer";
+import { server } from "./configs/server-config";
 
-const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
-new KafkaConsumer().start();
-
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
