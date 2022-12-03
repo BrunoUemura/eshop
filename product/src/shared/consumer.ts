@@ -6,6 +6,7 @@ import {
   logLevel,
 } from "kafkajs";
 import { KAFKA_CONFIG } from "../configs/kafka";
+import { EventListener } from "../events/event-listener";
 
 export default class KafkaConsumer {
   private kafkaConsumer: Consumer;
@@ -17,7 +18,7 @@ export default class KafkaConsumer {
   public async start(): Promise<void> {
     const topics: ConsumerSubscribeTopics = {
       topics: KAFKA_CONFIG.TOPICS,
-      fromBeginning: false,
+      fromBeginning: true,
     };
 
     try {
@@ -27,10 +28,19 @@ export default class KafkaConsumer {
       console.log(`Consumer connected`);
 
       await this.kafkaConsumer.run({
+        autoCommit: true,
+        autoCommitInterval: 100,
         eachMessage: async (messagePayload: EachMessagePayload) => {
           const { topic, partition, message } = messagePayload;
-          const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`;
-          console.log(`- ${prefix} ${message.key}#${message.value}`);
+          const parsedMessage = JSON.parse(message?.value?.toString() || "");
+
+          console.log(
+            `Received message on topic: ${topic} partition: ${partition} message: ${JSON.stringify(
+              parsedMessage
+            )}`
+          );
+
+          // new EventListener().handleEvent(parsedMessage);
         },
       });
     } catch (error) {
@@ -49,6 +59,9 @@ export default class KafkaConsumer {
       brokers: KAFKA_CONFIG.HOSTS,
     });
 
-    return kafka.consumer({ groupId: KAFKA_CONFIG.CONSUMER_GROUP_ID });
+    return kafka.consumer({
+      groupId: KAFKA_CONFIG.CONSUMER_GROUP_ID,
+      retry: { retries: 5 },
+    });
   }
 }

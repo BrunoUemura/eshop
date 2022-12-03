@@ -3,7 +3,7 @@ import { KAFKA_CONFIG } from "../configs/kafka";
 
 interface CustomMessageFormat {
   topic: string;
-  payload: string;
+  payload: object;
 }
 
 export default class KafkaProducer {
@@ -40,7 +40,7 @@ export default class KafkaProducer {
   ): Promise<RecordMetadata[]> {
     await this.start();
 
-    const result = this.producer.send({
+    const event = {
       topic: message.topic,
       messages: [
         {
@@ -48,7 +48,11 @@ export default class KafkaProducer {
           value: JSON.stringify(message),
         },
       ],
-    });
+    };
+
+    const result = this.producer.send(event);
+
+    console.log(`Successfully sent ${JSON.stringify(event)} event`);
 
     await this.shutdown();
 
