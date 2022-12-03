@@ -1,2 +1,3 @@
-# microservices-arch
-microservices-arch
+# eshop-arch
+
+eshop-arch

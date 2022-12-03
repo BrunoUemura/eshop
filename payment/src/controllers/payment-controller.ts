@@ -97,15 +97,25 @@ export const cancelPayment = async (
   }
 
   // Perform payment cancel
-  const payment = await paymentRepository.update({
+  const result = await paymentRepository.update({
     where: { id: Number(id) },
     data: {
       status: "canceled",
     },
   });
 
+  const message = {
+    topic: "payment",
+    payload: {
+      eventType: "payment/cancel",
+      data: result,
+    },
+  };
+
+  await kafkaProducer.sendMessage(message);
+
   return response.status(201).send({
-    message: `Successfully canceled payment ${payment.id}`,
-    data: payment,
+    message: `Successfully canceled payment ${result.id}`,
+    data: result,
   });
 };
