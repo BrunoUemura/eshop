@@ -40,7 +40,7 @@ export default class KafkaConsumer {
             )}`
           );
 
-          // new EventListener().handleEvent(parsedMessage);
+          new EventListener().handleEvent(parsedMessage);
         },
       });
     } catch (error) {

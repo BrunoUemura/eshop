@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd ./src/index.ts"
+    "dev": "tsnd ./src/index.ts",
+    "studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",

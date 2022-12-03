@@ -4,18 +4,33 @@ networks:
   app-net:
     driver: bridge
 
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+
 services:
   zookeeper:
     image: "bitnami/zookeeper:latest"
+    container_name: zookeeper-svc
     ports:
       - "2181:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - "zookeeper_data:/bitnami"
+    networks:
+      - app-net
 
   kafka:
     image: "bitnami/kafka:latest"
+    hostname: localhost
+    container_name: kafka-svc
     ports:
       - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
     environment:
       - KAFKA_BROKER_ID=1
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
@@ -24,3 +39,5 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    networks:
+      - app-net

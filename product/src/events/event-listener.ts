@@ -1,4 +1,7 @@
-import { orderCancelHandler, orderCreateHandler } from "./event-handler";
+import {
+  orderCancelHandler,
+  orderCreateHandler,
+} from "./handlers/order-event-handler";
 
 export class EventListener {
   async handleEvent(message: any) {
