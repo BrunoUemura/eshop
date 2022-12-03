@@ -1,4 +1,10 @@
-import { Kafka, logLevel, Producer, RecordMetadata } from "kafkajs";
+import {
+  Kafka,
+  logLevel,
+  Producer,
+  ProducerRecord,
+  RecordMetadata,
+} from "kafkajs";
 import { KAFKA_CONFIG } from "../configs/kafka";
 
 interface CustomMessageFormat {
@@ -40,7 +46,8 @@ export default class KafkaProducer {
   ): Promise<RecordMetadata[]> {
     await this.start();
 
-    const result = this.producer.send({
+    const event: ProducerRecord = {
+      acks: 0,
       topic: message.topic,
       messages: [
         {
@@ -48,7 +55,9 @@ export default class KafkaProducer {
           value: JSON.stringify(message),
         },
       ],
-    });
+    };
+
+    const result = this.producer.send(event);
 
     await this.shutdown();
 
