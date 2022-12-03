@@ -4,6 +4,7 @@ import KafkaProducer from "../shared/kafka-producer";
 
 const prisma = new PrismaClient();
 const orderRepository = prisma.order;
+const productRepository = prisma.product;
 const kafkaProducer = new KafkaProducer();
 
 export const getAllOrders = async (
@@ -30,10 +31,21 @@ export const createOrder = async (
   response: Response
 ): Promise<Response> => {
   const { productId, orderQuantity } = request.body;
+  const product = await productRepository.findFirst({
+    where: { id: Number(productId) },
+  });
+  if (!product) {
+    return response.status(400).send({
+      message: `Product ${productId} not found`,
+    });
+  }
+
+  const orderAmount = product.quantity * orderQuantity;
   const result = await orderRepository.create({
     data: {
       productId: Number(productId),
       orderQuantity: Number(orderQuantity),
+      amount: Number(orderAmount),
       status: "awaiting payment",
     },
   });
@@ -56,11 +68,38 @@ export const updateOrder = async (
   response: Response
 ): Promise<Response> => {
   const { id } = request.params;
-  const { productId, orderQuantity, status } = request.body;
+  const { productId, orderQuantity } = request.body;
+
+  const product = await productRepository.findFirst({
+    where: { id: Number(productId) },
+  });
+  if (!product) {
+    return response.status(400).send({
+      message: `Product ${productId} not found`,
+    });
+  }
+
+  const orderAmount = product.quantity * orderQuantity;
+
   const result = await orderRepository.update({
     where: { id: Number(id) },
-    data: { productId, orderQuantity, status },
+    data: {
+      productId: Number(productId),
+      orderQuantity: Number(orderQuantity),
+      amount: Number(orderAmount),
+    },
   });
+
+  const message = {
+    topic: "order",
+    payload: {
+      eventType: "order/update",
+      data: result,
+    },
+  };
+
+  await kafkaProducer.sendMessage(message);
+
   return response.send(result);
 };
 

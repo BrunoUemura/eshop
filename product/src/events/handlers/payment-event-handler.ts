@@ -10,7 +10,7 @@ export const paymentDoneHandler = async (data: any) => {
   try {
     // Check if order exists
     const order = await orderRepository.findFirst({
-      where: { id: data.orderId },
+      where: { id: Number(data.orderId) },
     });
     if (!order) {
       throw new Error(`Order ${data.orderId} not found`);
@@ -19,7 +19,7 @@ export const paymentDoneHandler = async (data: any) => {
     // Change order status
     const orderUpdate = await orderRepository.update({
       where: {
-        id: order.id,
+        id: Number(order.id),
       },
       data: {
         status: "payment done",
@@ -31,7 +31,7 @@ export const paymentDoneHandler = async (data: any) => {
 
     // Check if product exists and quantity is available
     const product = await productRepository.findFirst({
-      where: { id: data.productId },
+      where: { id: Number(data.productId) },
     });
     if (!product) {
       throw new Error(`Product ${data.productId} not found`);
@@ -44,9 +44,9 @@ export const paymentDoneHandler = async (data: any) => {
 
     const newProductQuantity = product.quantity - order.orderQuantity;
     const result = await productRepository.update({
-      where: { id: product.id },
+      where: { id: Number(product.id) },
       data: {
-        quantity: newProductQuantity,
+        quantity: Number(newProductQuantity),
       },
     });
     console.log(
@@ -71,7 +71,7 @@ export const paymentCancelHandler = async (data: any) => {
   try {
     // Check if order exists
     const order = await orderRepository.findFirst({
-      where: { id: data.orderId },
+      where: { id: Number(data.orderId) },
     });
     if (!order) {
       throw new Error(`Order ${data.orderId} not found`);
@@ -79,7 +79,7 @@ export const paymentCancelHandler = async (data: any) => {
     // Change order status
     const orderUpdate = await orderRepository.update({
       where: {
-        id: order.id,
+        id: Number(order.id),
       },
       data: {
         status: "canceled",
@@ -91,7 +91,7 @@ export const paymentCancelHandler = async (data: any) => {
 
     // Check if product exists
     const product = await productRepository.findFirst({
-      where: { id: data.productId },
+      where: { id: Number(data.productId) },
     });
     if (!product) {
       throw new Error(`Product ${data.productId} not found`);
@@ -99,9 +99,9 @@ export const paymentCancelHandler = async (data: any) => {
 
     const newProductQuantity = product.quantity + order.orderQuantity;
     const result = await productRepository.update({
-      where: { id: product.id },
+      where: { id: Number(product.id) },
       data: {
-        quantity: newProductQuantity,
+        quantity: Number(newProductQuantity),
       },
     });
     console.log(

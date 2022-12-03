@@ -7,7 +7,7 @@ export const productUpdateHandler = async (data: Product) => {
   try {
     // Check if product exists
     const product = await productRepository.findFirst({
-      where: { id: data.id },
+      where: { id: Number(data.id) },
     });
     if (!product) {
       throw new Error(`Product ${data.id} not found`);
@@ -17,8 +17,8 @@ export const productUpdateHandler = async (data: Product) => {
     const result = await productRepository.update({
       where: { id: product.id },
       data: {
-        name: data.name,
-        quantity: data.quantity,
+        name: String(data.name),
+        quantity: Number(data.quantity),
       },
     });
     console.log(`Successfully updated product ${result.id}`);
