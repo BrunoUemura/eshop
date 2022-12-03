@@ -3,10 +3,12 @@ import { Order, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const orderRepository = prisma.order;
 const productRepository = prisma.product;
+const reservedProductRepository = prisma.reservedProduct;
 
 export const orderCreateHandler = async (data: Order) => {
   try {
-    const result = await orderRepository.create({
+    // Add order
+    const order = await orderRepository.create({
       data: {
         id: data.id,
         productId: data.productId,
@@ -14,70 +16,75 @@ export const orderCreateHandler = async (data: Order) => {
         status: data.status,
       },
     });
-    console.log(`Successfully created order ${result.id}`);
+    console.log(`Successfully added order ${order.id}`);
 
+    // Check if product exists and quantity is available
     const product = await productRepository.findFirst({
       where: { id: data.productId },
     });
-
     if (!product) {
       throw new Error(`Product ${data.productId} not found`);
     }
-
     if (product.quantity < data.orderQuantity) {
       throw new Error(
         `Order quantity ${data.orderQuantity} exceeds product quantity ${data.orderQuantity}`
       );
     }
 
-    const newProductQuantity = product.quantity - data.orderQuantity;
-
-    const res = await productRepository.update({
-      where: { id: data.productId },
+    // Create product reservation
+    const reservedProduct = await reservedProductRepository.create({
       data: {
-        quantity: newProductQuantity,
+        orderId: data.id,
+        productId: data.productId,
+        quantity: data.orderQuantity,
+        status: data.status,
       },
     });
 
-    console.log(`Successfully updated product ${res.id}`);
+    console.log(
+      `Successfully created product reservation ${reservedProduct.id} for product ${product.id}`
+    );
   } catch (error) {
-    console.log(`Failed to create order`);
+    console.log(error);
   }
 };
 
 export const orderCancelHandler = async (data: Order) => {
   try {
+    // Check if order exists
     const order = await orderRepository.findFirst({ where: { id: data.id } });
     if (!order) {
       throw new Error(`Order ${data.id} not found`);
     }
 
+    // Cancel existing order
     const cancelledOrder = await orderRepository.update({
       where: { id: data.id },
       data: {
-        status: "cancelled",
+        status: "canceled",
       },
     });
 
     console.log(`Successfully canceled order ${cancelledOrder.id}`);
 
-    const product = await productRepository.findFirst({
-      where: { id: data.productId },
+    // Check if reservation exists
+    const reservation = await reservedProductRepository.findFirst({
+      where: { orderId: data.id },
     });
-    if (!product) {
-      throw new Error(`Product ${data.productId} not found`);
+    if (!reservation) {
+      throw new Error(`Reservation for order ${data.id} not found`);
     }
 
-    const newProductQuantity = product.quantity + order.orderQuantity;
-    const updatedProduct = await productRepository.update({
-      where: { id: product.id },
+    // Cancel reservation
+    const updatedProduct = await reservedProductRepository.update({
+      where: { id: reservation.id },
       data: {
-        quantity: newProductQuantity,
+        status: "canceled",
       },
     });
 
-    console.log(`Successfully updated product ${updatedProduct.id} quantity`);
+    console.log(`Successfully canceled reservation ${updatedProduct.id}`);
   } catch (error) {
-    console.log(`Failed to create order`);
+    console.log(error);
   }
 };

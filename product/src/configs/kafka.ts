@@ -5,7 +5,7 @@ const host = ip.address();
 export const KAFKA_CONFIG = {
   HOSTS: [String(process.env.KAFKA_HOST) || `${host}:9092`],
   CLIENT_ID: "client-id",
-  CONSUMER_GROUP_ID: "consumer-group",
-  PRODUCER_GROUP_ID: "producer-group",
+  CONSUMER_GROUP_ID: "order-consumer-group",
+  PRODUCER_GROUP_ID: "product-producer-group",
   TOPICS: ["product", "order"],
 };

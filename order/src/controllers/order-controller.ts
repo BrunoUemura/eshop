@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import KafkaProducer from "../shared/producer";
+import KafkaProducer from "../shared/kafka-producer";
 
 const prisma = new PrismaClient();
 const orderRepository = prisma.order;

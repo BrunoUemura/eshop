@@ -33,7 +33,7 @@ export default class KafkaProducer {
 
   private createProducer(): Producer {
     const kafka = new Kafka({
-      logLevel: logLevel.DEBUG,
+      // logLevel: logLevel.DEBUG,
       clientId: KAFKA_CONFIG.PRODUCER_GROUP_ID,
       brokers: KAFKA_CONFIG.HOSTS,
     });
@@ -61,7 +61,7 @@ export default class KafkaProducer {
 
     console.log(`Successfully sent ${JSON.stringify(event)} event`);
 
-    await this.shutdown();
+    // await this.shutdown();
 
     return result;
   }

@@ -3,8 +3,8 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 
-import KafkaConsumer from "../shared/consumer";
 import { router } from "../routes";
+import KafkaConsumer from "../shared/kafka-consumer";
 
 const app = express();
 
