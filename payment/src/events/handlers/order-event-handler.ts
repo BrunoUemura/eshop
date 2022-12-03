@@ -6,6 +6,17 @@ const productRepository = prisma.product;
 
 export const orderCreateHandler = async (data: Order) => {
   try {
+    // Add order
+    const order = await orderRepository.create({
+      data: {
+        id: data.id,
+        productId: data.productId,
+        orderQuantity: data.orderQuantity,
+        status: data.status,
+      },
+    });
+    console.log(`Successfully added order ${order.id}`);
+
     // Check if product exists and quantity is available
     const product = await productRepository.findFirst({
       where: { id: data.productId },
@@ -18,17 +29,6 @@ export const orderCreateHandler = async (data: Order) => {
         `Order quantity ${data.orderQuantity} exceeds product quantity ${data.orderQuantity}`
       );
     }
-
-    // Add order
-    const order = await orderRepository.create({
-      data: {
-        id: data.id,
-        productId: data.productId,
-        orderQuantity: data.orderQuantity,
-        status: data.status,
-      },
-    });
-    console.log(`Successfully added order ${order.id}`);
   } catch (error) {
     console.log(error);
   }
@@ -46,9 +46,9 @@ export const orderUpdateHandler = async (data: Order) => {
     const result = await orderRepository.update({
       where: { id: data.id },
       data: {
-        orderQuantity: order.orderQuantity,
-        productId: order.productId,
-        status: order.status,
+        orderQuantity: data.orderQuantity,
+        productId: data.productId,
+        status: data.status,
       },
     });
 

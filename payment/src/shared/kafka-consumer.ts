@@ -18,7 +18,7 @@ export default class KafkaConsumer {
   public async start(): Promise<void> {
     const topics: ConsumerSubscribeTopics = {
       topics: KAFKA_CONFIG.TOPICS,
-      fromBeginning: false,
+      fromBeginning: true,
     };
 
     try {
@@ -59,6 +59,9 @@ export default class KafkaConsumer {
       brokers: KAFKA_CONFIG.HOSTS,
     });
 
-    return kafka.consumer({ groupId: KAFKA_CONFIG.CONSUMER_GROUP_ID });
+    return kafka.consumer({
+      groupId: KAFKA_CONFIG.CONSUMER_GROUP_ID,
+      retry: { retries: 5 },
+    });
   }
 }

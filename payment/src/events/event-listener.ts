@@ -3,10 +3,7 @@ import {
   orderCreateHandler,
   orderUpdateHandler,
 } from "./handlers/order-event-handler";
-import {
-  paymentCancelHandler,
-  paymentDoneHandler,
-} from "./handlers/payment-event-handler";
+import { productUpdateHandler } from "./handlers/product-event-handler";
 
 export class EventListener {
   async handleEvent(message: any) {
@@ -27,13 +24,10 @@ export class EventListener {
       }
     }
 
-    if (message.topic === "payment") {
+    if (message.topic === "product") {
       switch (message.payload.eventType) {
-        case "payment/done":
-          await paymentDoneHandler(message.payload.data);
-          break;
-        case "payment/cancel":
-          await paymentCancelHandler(message.payload.data);
+        case "product/update":
+          await productUpdateHandler(message.payload.data);
           break;
         default:
           console.log("No action required for event");
