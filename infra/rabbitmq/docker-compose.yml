@@ -1,0 +1,19 @@
+version: "3.8"
+
+networks:
+  app-net:
+    driver: bridge
+
+services:
+  rabbitmq:
+    build:
+      context: ./backend/rabbitmq
+      dockerfile: ./Dockerfile
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "./data/rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    networks:
+      - app-net
