@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  payment-service:
+    container_name: payment-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 5003:5003

@@ -1,0 +1,25 @@
+{
+  "name": "eshop",
+  "version": "1.0.0",
+  "description": "eshop-arch",
+  "main": "index.js",
+  "scripts": {
+    "kafka:start": "sh ./scripts/kafka_start.sh",
+    "kafka:down": "sh ./scripts/kafka_down.sh",
+    "rabbitmq:start": "sh ./scripts/rabbitmq_start.sh",
+    "rabbitmq:down": "sh ./scripts/rabbitmq_down.sh",
+    "backend:start": "sh ./scripts/backend_start.sh",
+    "backend:down": "sh ./scripts/backend_down.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrunoUemura/microservices-arch.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrunoUemura/microservices-arch/issues"
+  },
+  "homepage": "https://github.com/BrunoUemura/microservices-arch#readme"
+}
