@@ -82,7 +82,7 @@ export const paymentCancelHandler = async (data: any) => {
         id: Number(order.id),
       },
       data: {
-        status: "canceled",
+        status: "payment canceled",
       },
     });
     console.log(

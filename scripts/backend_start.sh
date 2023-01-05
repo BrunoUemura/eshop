@@ -1,12 +1,12 @@
 #!/bin/bash
 
-cd apps/backend/order;
+cd apps/order;
 pnpm docker:start;
 sleep 30;
 
-cd apps/backend/paynment;
+cd apps/paynment;
 pnpm docker:start;
 sleep 30;
 
-cd apps/backend/product;
+cd apps/product;
 pnpm docker:start;
